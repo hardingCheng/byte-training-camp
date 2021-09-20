@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/hardingCheng/byte-training-camp#readme",
   "dependencies": {
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.12",
+    "sequelize": "^6.6.5"
   }
 }
