@@ -31,7 +31,7 @@
 
 
 
-https://www.sequelize.com.cn/
+// https://www.sequelize.com.cn/  sequelize中文文档
 
 
 (async () => {
@@ -99,7 +99,7 @@ https://www.sequelize.com.cn/
     // 使用实例方法
     Fruit.findAll().then(fruits => {
         const [f1] = fruits;
-        console.log(`${f1.totalPrice(5)}`);      
+        console.log(`${f1.totalPrice(5)}`);
     });
 
     ret = await Fruit.findAll({
