@@ -1,0 +1,27 @@
+{
+  "name": "byte-training-camp",
+  "version": "1.0.0",
+  "description": "字节实训营的实践,实战.",
+  "main": "inde.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hardingCheng/byte-training-camp.git"
+  },
+  "keywords": [
+    "字节",
+    "实践",
+    "实战"
+  ],
+  "author": "hardingcheng",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hardingCheng/byte-training-camp/issues"
+  },
+  "homepage": "https://github.com/hardingCheng/byte-training-camp#readme",
+  "dependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
