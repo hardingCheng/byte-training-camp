@@ -6,7 +6,6 @@ const app = new Koa();
 const jwt = require("jsonwebtoken");
 const jwtAuth = require("koa-jwt");
 
-
 // 加密解密  密钥
 const secret = "it's a secret";
 app.use(bodyParser())
