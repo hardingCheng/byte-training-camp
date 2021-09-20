@@ -8,14 +8,12 @@ const path = require('path');//引入path模块
 // response : 从服务器返回给浏览器的信息
 http.createServer((request, response) => {
     const { url,method } = request
-    var pathname = url.parse(url).pathname;;
-    if((pathname === '/' || pathname === '/index.html') && method === 'GET'){
+    if(url === '/' && method === 'GET'){
         let PUBLIC_PATH = path.resolve(__dirname, 'index.html');
         fs.readFile(PUBLIC_PATH, (err, data) => {
             if(err) {
-                console.log(err);
                 response.writeHead(500,{
-                    'Content-Type': 'text/plain;charset=utf-8',
+                    'Content-Type': 'text/plain;charset=utf-8',s
                 })
                 response.end('500 服务器挂了')
                 return
