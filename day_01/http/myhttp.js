@@ -10,7 +10,8 @@ http.createServer((request, response) => {
     const { url,method,headers } = request
     //url模块的parse方法 接受一个字符串，返回一个url对象,切出来路径
     const pathName = nodeurl.parse(url).pathname;  "/index.html    /"  
-    //有可能出现中文乱码，写成中文路径(这个还没有解决  刚才输入没切换 出现了这个问题)
+    //有可能出现中文乱码，写成中文路径(刚才输入没切换 出现了这个问题)
+    pathName = decodeURI(pathName);
     if(pathName === '/' || pathName === '/index.html' && method === 'GET'){
         //获取资源文件的绝对路径 (回来需要提出函数  不是这种写死的)
         let PUBLIC_PATH = path.resolve(__dirname, 'index.html');
