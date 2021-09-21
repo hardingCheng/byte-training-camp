@@ -1,0 +1,25 @@
+{
+    "name": "koa-setup",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "bin": {
+        "koa-setup": "index.js"
+    },
+    "scripts": {
+        "test": "rm -rf ./haha && node index.js"
+    },
+        "type": "module",
+        "keywords": [],
+        "author": "",
+        "license": "ISC",
+        "dependencies": {
+        "koa": "^2.13.1"
+        <% if (router) { %>
+            ,"koa-router": "^10.1.1"
+        <% } %>
+        <% if (router) { %>
+            ,"koa-static": "^10.1.1"
+        <% } %>
+    }
+}
