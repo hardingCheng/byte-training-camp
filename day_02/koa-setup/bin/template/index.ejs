@@ -22,6 +22,6 @@ const app = new Koa();
     app.use(serve(__dirname + "/static"));
 <% } %>
 
-app.listen(<%= port %>, () => {
-console.log("open server localhost:<%= port %>");
+app.listen(8080, () => {
+console.log("open server localhost:8080");
 });
