@@ -1,5 +1,5 @@
 {
-  "name": "koa-setup-new",
+  "name": "koa-setup",
   "version": "1.0.0",
   "description": "",
   "main": "bin/index.js",
@@ -7,7 +7,7 @@
     "koa-setup": "./bin/index.js"
   },
   "scripts": {
-    "test": "rm -rf ./haha &&  koa-setup-new index.js"
+    "test": "rm -rf ./haha &&  koa-setup index.js"
   },
   "type": "module",
   "keywords": [],
