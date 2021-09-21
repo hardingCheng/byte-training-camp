@@ -4,7 +4,9 @@
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "start": "webpack serve --open"
   },
   "dependencies": {
     "css-loader": "^6.3.0",

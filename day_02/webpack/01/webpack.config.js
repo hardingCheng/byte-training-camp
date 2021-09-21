@@ -1,10 +1,9 @@
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const {plugin} = require("./webpack.config");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = {
     //入口文件
     mode: 'development',
-    ntry: {
+    entry: {
         index: './src/index.js',
         another: './src/another-module.js',
 
@@ -21,16 +20,17 @@ module.exports = {
         // shared: ["lodash"],
     },
     output: {
-        filename: 'bundle.js',
+        filename: "[name].bundle.js",
         //必须是一个绝对路径
         path: path.resolve(__dirname, 'dist'),
-        clear: true
+        clean: true,
     },
     devServer: {
         static: {
-            directory: path.join(__dirname, 'dist'),
+            directory: path.join(__dirname, 'dist/index.html'),
         },
         compress: true,
+        open:true,
         port: 9000,
     },
     // 方式二
@@ -60,10 +60,10 @@ module.exports = {
 
         ]
     },
-    plugin: [
+    plugins: [
         new HtmlWebpackPlugin({
-            title: 'Output Management'
-        })
-    ]
+            title: "Output Management",
+        }),
+    ],
 
 }
