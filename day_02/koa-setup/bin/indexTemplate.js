@@ -14,9 +14,12 @@ export function createIndexTemplate(config){
     let PUBLIC_PATH = path.resolve(__dirname, './template/index.ejs');
     const template = fs.readFileSync( PUBLIC_PATH,'utf-8').toString()
 
-    const code = ejs.render(template,{
+    const code = ejs.render(template, {
         router: config.middleware.router,
-    })
+        static: config.middleware.static,
+        port: config.port,
+    });
+
     return prettier.format(code,{
         parser:"babel"
     })
