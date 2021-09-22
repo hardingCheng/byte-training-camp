@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+    #drag {
+      width: 100px;
+      height: 100px;
+      background-color: pink;
+
+    }
+  </style>
+</head>
+<body>
+<div id="drag"></div>
+
+<script>
+  function enableDrag(element) {
+    let x0, y0
+    let ex = 0, ey =0
+    let move = e => {
+      // 移动时候的鼠标坐标
+      let [dx, dy] = [e.clientX - x0, e.clientY - y0]
+      element.style.transform = `translate(${ex+dx}px, ${ey + dy}px)`
+    }
+    let up = e => {
+      //移除监听事件
+      document.removeEventListener('mousemove', move)
+      document.removeEventListener('mouseup', up)
+      let [dx, dy] = [e.clientX - x0, e.clientY - y0]
+      element.style.transform = `translate(${ex+dx}, ${ey + dy})`
+      // 记录位置
+      ex += dx
+      ey += dy
+    }
+    element.addEventListener('mousedown', e=> {
+      // 一开始的鼠标坐标
+      [x0, y0] = [e.clientX, e.clientY]
+      document.addEventListener('mousemove', move)
+      document.addEventListener('mouseup', up)
+    })
+  }
+  enableDrag(document.getElementById('drag'))
+</script>
+</body>
+</html>
