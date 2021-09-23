@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>天猫小黑盒</title>
+    <link rel="stylesheet" href="./css/index.css"/>
+    <script>
+        (function () {
+            let metaEl = document.createElement('meta');
+            let scale = devicePixelRatio;
+            metaEl.setAttribute('name', 'viewport');
+            metaEl.setAttribute('content', 'initial-scale=' + (1 / scale) + ', maximum-scale=' + (1 / scale) + ', minimum-scale=' + (1 / scale) + ', user-scalable=no');
+            document.documentElement.firstElementChild.appendChild(metaEl);
+        })();
+        /*
+         const doc = document.documentElement;
+        const scrollHeight = doc.scrollHeight;
+        const clientHeight = doc.clientHeight;
+        const scrollTop = doc.scrollTop;
+
+
+        const 进度 =
+          Math.floor((scrollTop / (scrollHeight - clientHeight)) * 100) / 100;
+
+
+
+
+         */
+        window.onload = function() {
+            let progress = document.querySelector('.adsorption-progress')
+            let flow = document.querySelector('.progress-flow')
+            let progresslen = document.querySelector('.progress').clientWidth
+            window.onscroll = function() {
+                // 获取当前页面的滚动条纵坐标位置 （依次为火狐谷歌、safari、IE678）
+                let scrollT = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+                //因为本身就在最顶部
+                if (scrollT > 0) {
+                    // 正常浏览器代码
+                    progress.style.position = 'fixed';
+                    progress.style.top = 0;
+                    progress.style.left = 0;
+                    flow.style.width = (Math.min(scrollT / progresslen, 1)) * 100 + '%'
+                    console.log(flow.style.width)
+                } else{
+                    progress.style.position = 'relative';
+                    flow.style.width = '0px'
+                }
+            }
+
+
+        }
+    </script>
+
+    <script src="js/babel.js"></script>
+    <script src="js/gesture.js" type="text/babel"></script>
+    <script src="js/Carousel.js" type="text/babel"></script>
+</head>
+<body>
+<div class="main">
+    <div class="adsorption-progress">
+        <span>浏览进度</span>
+        <div class="progress">
+            <div class="progress-flow"></div>
+        </div>
+    </div>
+    <div class="banner">
+        <div class="banner-hot">
+            <span>野兽派十年</span>
+            <span>新品精选</span>
+            <span>开盒有喜</span>
+        </div>
+        <div class="banner-top">
+            <ul class="banner-pic">
+                <li>
+                    <img src="https://static001.geekbang.org/resource/image/bb/21/bb38fb7c1073eaee1755f81131f11d21.jpg" />
+                </li>
+                <li>
+                    <img src="https://static001.geekbang.org/resource/image/1b/21/1b809d9a2bdf3ecc481322d7c9223c21.jpg" />
+                </li>
+                <li>
+                    <img src="https://static001.geekbang.org/resource/image/b6/4f/b6d65b2f12646a9fd6b8cb2b020d754f.jpg" />
+                </li>
+                <li>
+                    <img src="https://static001.geekbang.org/resource/image/73/e4/730ea9c393def7975deceb48b3eb6fe4.jpg" />
+                </li>
+            </ul>
+            <nav class="banner-dot">
+                <span class="active"></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </nav>
+        </div>
+        <div class="banner-bottom">
+            <img src="./img/banner_bottom.png" alt="">
+        </div>
+
+    </div>
+    <div class="tianmao-box">
+        <img src="./img/kaiheyouxi.png" alt="">
+    </div>
+    <div class="lottery-calendar">
+        <div class="lottery-calendar-item">
+            <span>尖货抽签</span>
+            <img src="./img/shouban.png" alt="">
+        </div>
+        <div class="lottery-calendar-item">
+            <span>新品日历</span>
+            <img src="./img/xiezi.png" alt="">
+        </div>
+    </div>
+    <div class="my-brand">
+        <div class="my-brand-top">
+            <span>我的品牌</span>
+            <span>正在上新</span>
+        </div>
+        <div class="my-brand-bottom">
+            <div class="my-brand-bottom-item">
+                <div class="my-brand-img">
+                    <img src="./img/diannao.png" alt="">
+                    <span class="recommend-active">推荐</span>
+                </div>
+                <span>Apple</span>
+            </div>
+            <div class="my-brand-bottom-item">
+                <div class="my-brand-img">
+                    <img src="./img/diannao.png" alt="">
+                </div>
+                <span>Apple</span>
+            </div>
+            <div class="my-brand-bottom-item">
+                <div class="my-brand-img">
+                    <img src="./img/diannao.png" alt="">
+                </div>
+                <span>Apple</span>
+            </div>
+            <div class="my-brand-bottom-item">
+                <div class="my-brand-img">
+                    <img src="./img/diannao.png" alt="">
+                    <span class="recommend-active">推荐</span>
+                </div>
+                <span>Apple</span>
+            </div>
+            <div class="my-brand-bottom-item">
+                <div class="my-brand-img">
+                    <img src="./img/diannao.png" alt="">
+                </div>
+                <span>Apple</span>
+            </div>
+            <div class="my-brand-bottom-item">
+                <div class="my-brand-img">
+                    <img src="./img/diannao.png" alt="">
+                </div>
+                <span>Apple</span>
+            </div>
+            <div class="my-brand-bottom-item">
+                <div class="my-brand-img">
+                    <img src="./img/diannao.png" alt="">
+                    <span class="recommend-active">推荐</span>
+                </div>
+                <span>Apple</span>
+            </div>
+            <div class="my-brand-bottom-item">
+                <div class="my-brand-img">
+                    <img src="./img/diannao.png" alt="">
+                </div>
+                <span>Apple</span>
+            </div>
+            <div class="my-brand-bottom-item">
+                <div class="my-brand-img">
+                    <img src="./img/diannao.png" alt="">
+                </div>
+                <span>Apple</span>
+            </div>
+        </div>
+    </div>
+    <div class="hot-new-product">
+        <ul class="hot-new-product-menu">
+            <li class="active">热度新品</li>
+            <li>刚刚直降</li>
+            <li>趋势</li>
+            <li>潮玩</li>
+            <li>数码</li>
+            <li>家电</li>
+            <li>零食</li>
+            <li>女装</li>
+        </ul>
+        <div class="hot-new-product-classification">
+            <div class="hot-new-product-classification-item">
+                <img src="./img/airpods.png" alt="">
+            </div>
+            <div class="hot-new-product-classification-item">
+                <img src="./img/applewatch.png" alt="">
+            </div>
+            <div class="hot-new-product-classification-item">
+                <img src="./img/airpods.png" alt="">
+            </div>
+            <div class="hot-new-product-classification-item">
+                <img src="./img/applewatch.png" alt="">
+            </div>
+            <div class="hot-new-product-classification-item">
+                <img src="./img/airpods.png" alt="">
+            </div>
+            <div class="hot-new-product-classification-item">
+                <img src="./img/applewatch.png" alt="">
+            </div>
+            <div class="hot-new-product-classification-item">
+                <img src="./img/airpods.png" alt="">
+            </div>
+            <div class="hot-new-product-classification-item">
+                <img src="./img/applewatch.png" alt="">
+            </div>
+            <div class="hot-new-product-classification-item">
+                <img src="./img/airpods.png" alt="">
+            </div>
+            <div class="hot-new-product-classification-item">
+                <img src="./img/applewatch.png" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/babel">
+    {
+        new Carousel({
+            imgList:document.querySelector(".banner-pic"),
+            navs:document.querySelectorAll(".banner-dot span")
+        });
+    }
+</script>
+</body>
+</html>

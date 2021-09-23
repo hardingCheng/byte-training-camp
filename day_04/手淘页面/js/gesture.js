@@ -67,67 +67,67 @@ function enableGesture(ele){
             }));
         },500)
     };
-    let onMove = (e,c)=>{
-        let dx = e.clientX - c.startX;
-        let dy = e.clientY - c.startY;
+    let onMove = (e,contexts)=>{
+        let dx = e.clientX - contexts.startX;
+        let dy = e.clientY - contexts.startY;
         ele.dispatchEvent(Object.assign(new CustomEvent("move"),{
             clientX: e.clientX,
             clientY: e.clientY
         }));
-        if(dx ** 2 + dy ** 2 > 100&&(!c.isPan)){
-            c.isPan = true;
-            if(c.isPress){
+        if(dx ** 2 + dy ** 2 > 100&&(!contexts.isPan)){
+            contexts.isPan = true;
+            if(contexts.isPress){
                 ele.dispatchEvent(Object.assign(new CustomEvent("presscancel"),{
                     clientX: e.clientX,
                     clientY: e.clientY
                 }));
             }
-            clearTimeout(c.timeout);
-            c.isTap = false;
-            c.isPress = false;
+            clearTimeout(contexts.timeout);
+            contexts.isTap = false;
+            contexts.isPress = false;
             ele.dispatchEvent(Object.assign(new CustomEvent("panstart"),{
                 clientX: e.clientX,
                 clientY: e.clientY,
-                startX: c.startX,
-                startY: c.startY,
-                stop: c.stop
+                startX: contexts.startX,
+                startY: contexts.startY,
+                stop: contexts.stop
             }));
             return ;
         }
-        if(c.isPan){
+        if(contexts.isPan){
             ele.dispatchEvent(Object.assign(new CustomEvent("pan"),{
                 clientX: e.clientX,
                 clientY: e.clientY,
-                startX: c.startX,
-                startY: c.startY,
-                stop: c.stop
+                startX: contexts.startX,
+                startY: contexts.startY,
+                stop: contexts.stop
             }));
         }
     };
-    let onEnd = (e,c)=>{
-        clearTimeout(c.timeout);
-        if(c.isPan){
+    let onEnd = (e,contexts)=>{
+        clearTimeout(contexts.timeout);
+        if(contexts.isPan){
             ele.dispatchEvent(Object.assign(new CustomEvent("panend"),{
                 clientX: e.clientX,
                 clientY: e.clientY,
-                startX: c.startX,
-                startY: c.startY
+                startX: contexts.startX,
+                startY: contexts.startY
             }));
-            c.isPan = false;
+            contexts.isPan = false;
         }
-        if (c.isTap) {
+        if (contexts.isTap) {
             ele.dispatchEvent(Object.assign(new CustomEvent("tap"), {
                 clientX: e.clientX,
                 clientY: e.clientY
             }));
-            c.isTap = false;
+            contexts.isTap = false;
         }
-        if (c.isPress) {
+        if (contexts.isPress) {
             ele.dispatchEvent(Object.assign(new CustomEvent("pressend"), {
                 clientX: e.clientX,
                 clientY: e.clientY
             }));
-            c.isPress = false;
+            contexts.isPress = false;
         }
         ele.dispatchEvent(Object.assign(new CustomEvent("end"),{
             clientX: e.clientX,
