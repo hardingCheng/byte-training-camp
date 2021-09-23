@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        /*比例单位*/
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        #box {
+            width: 46.4vw;
+            height: 24vw;
+            background: red;
+            margin: 0 0.2rem;
+        }
+    </style>
+</head>
+<body>
+<div id="box">
+    <ul>
+        <li id="t1"></li>
+        <li id="t2"></li>
+        <li id="t3"></li>
+    </ul>
+</div>
+<script>
+    document.addEventListener('touchstart',e => e.preventDefault(),{passive:false})
+    let box = document.getElementById("box");
+    let t1 = document.getElementById("t1");
+    let t2 = document.getElementById("t2");
+    let t3 = document.getElementById("t3");
+    box.addEventListener('click', function( event){
+        console.log(event)
+    })
+    box.addEventListener('touchstart', function( event){
+        console.log(event)
+    })
+    box.addEventListener('touchmove', function( event){
+        console.log(event.changedTouches.length)
+        t3.
+        console.log(event.targetTouches.length)
+        console.log(event.touches.length)
+    })
+    box.addEventListener('touchend',function( event){
+        console.log(event)
+    })
+</script>
+</body>
+</html>

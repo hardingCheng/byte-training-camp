@@ -27,7 +27,7 @@ module.exports = {
     },
     devServer: {
         static: {
-            directory: path.join(__dirname, 'dist/index.html'),
+            directory: path.join(__dirname, 'dist/1-3文件命名和老师不一样.html'),
         },
         compress: true,
         open:true,

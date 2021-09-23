@@ -12,7 +12,7 @@ function rewriteImport(content) {
 app.use(ctx => {
   const url = ctx.request.url
   if (url === '/') {
-    ctx.body = fs.readFileSync('./index.html','utf-8')
+    ctx.body = fs.readFileSync('./1-3文件命名和老师不一样.html','utf-8')
   }else if(url.endsWith(".js")){
     // 找到对应的路径  去加载  然后给到浏览器
     const p = path.resolve(__dirname,url.slice(1))
