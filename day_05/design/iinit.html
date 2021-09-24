@@ -10,10 +10,13 @@
 <!--    {{title}}-->
 </div>
 <script>
+    function h(tag,props,children) {
+        return {tag,props,children}
+    }
     // 1.基本结构
     const Vue = {
         // 扩展性
-        createRenderer({querySelector,insert}) {
+        createRenderer({querySelector,insert,createElement}) {
             return {
                 createApp(options) {
                     return {
@@ -44,6 +47,7 @@
                             // 对某个对象封装加盒
                             const proxy = new Proxy(this,{
                                 get(target,key){
+                                    console.log(target,key)
                                     if (target.setupState && key in target.setupState){
                                         return Reflect.get(target.setupState,key)
                                     }else {
@@ -51,6 +55,7 @@
                                     }
                                 },
                                 set(target,key,val){
+                                    console.log(target,key,val)
                                     if (target.setupState && key in target.setupState){
                                         Reflect.set(target.setupState,key,val)
                                     }else {
@@ -60,22 +65,52 @@
                             })
 
                             //2.2 用户直接编写render
-                            this.update = function(){
-                                // 把data的返回值作为上下文
-                                const el = options.render.call(proxy)
-                                //  3.追加到宿主
-                                insert(el,parent)
+                            //把render变为副作用函数   options.render 里面的set 就又触发了options.render
+                            this.update = effect(() => {
+                                // // 把data的返回值作为上下文
+                                // const el = options.render.call(proxy)
+                                // //  3.追加到宿主
+                                parent.innerHTML = ''
+                                // insert(el,parent)
+                                const vnode = options.render.call(proxy)
+                                // 转化为vnode -> dom
+                                if (!this.isMountde){
+                                    const el = this.createElm(vnode)
+                                    insert(el,parent)
+                                    this.isMountde = true
+                                }else {
+
+                                }
+                            })
+                        },
+                        createElm({tag,props,children}) {
+                            //遍历vnode 生成整棵树
+                            // 设计平台通用的createElement
+                            const el = createElement(tag)
+                            // 如果有属性 就是设置他们
+                            // el.setAttribute(key,val)
+                            if (typeof children === 'string'){
+                                el.textContent = children
+                            }else {
+                                //先把创建的子树加入到父元素   然后  在进行递归构建
+                                children.forEach(child => insert(this.createElm(child),el))
                             }
-                            this.update()
+                            return el
                         },
                         compile(template) {
                             // 返回一个render函数
                             // parse -> ast
                             // generate -> ast -> render
                             return function render() {
-                                const h3 = document.createElement('h3')
-                                h3.textContent = this.title
-                                return h3
+                                // const h3 = document.createElement('h3')
+                                // h3.textContent = this.title
+                                // return h3
+                                // return h('h2',null,this.title)
+                                return h('h1',null,[
+                                    h('p',null,'vnode1'),
+                                    h('p',null,'vnode2'),
+                                    h('p',null,'vnode3')
+                                ])
                             }
                         }
                     }
@@ -90,8 +125,10 @@
                     return node = document.querySelector(sel)
                 },
                 insert(el,parent){
-                    parent.innerHTML = ''
                     parent.appendChild(el)
+                },
+                createElement(tag){
+                    return document.createElement(tag)
                 }
             })
             return renderer.createApp(options)
@@ -106,13 +143,13 @@
         return new Proxy(obj,{
             get(target,key){
                 // 建立依赖关系   target,key,update
-                console.log('get',key)
+                // console.log('get',key)
                 track(target,key)  //订阅
                 return target[key]
 
             },
             set(target,key,val){
-                console.log('set',key)
+                // console.log('set',key)
                 Reflect.set(target,key,val)
                 // 获取依赖关系
                 // 通知更新  发布
@@ -171,11 +208,7 @@
             }
         }
     }
-    const obj = reactive({foo:'foo'})
-    effect(() => {
-        console.log(obj.foo)
-    })
-    obj.foo = 'foooooooooooooooooooooooooooooooooo'
+
     const app = Vue.createApp({
         //  需要处理data的数据的响应式
        // data() {
@@ -187,10 +220,10 @@
             const state = reactive({
                 title:'hello,vue3! Proxy + 我来扩展了！createRenderer'
             })
-            // setTimeout(() => {
-            //     state.title = '我来扩展了！createRenderer + hello,vue3! Proxy + 我是2秒之后相应更新的'
-            // },2000)
-
+            // 组件更新  变为副作用函数
+            setTimeout(() => {
+                state.title = '我来扩展了！createRenderer + hello,vue3! Proxy + 我是2秒之后相应更新的'
+            },2000)
             return state
         }
     })
