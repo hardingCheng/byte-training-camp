@@ -7,9 +7,10 @@
 </head>
 <body>
 <div id="app">
-<!--    {{title}}-->
+<!--<p>{{title}}</p>-->
 </div>
 <script>
+    // 传入信息，返回vnode
     function h(tag,props,children) {
         return {tag,props,children}
     }
@@ -70,20 +71,52 @@
                                 // // 把data的返回值作为上下文
                                 // const el = options.render.call(proxy)
                                 // //  3.追加到宿主
-                                parent.innerHTML = ''
+                                // parent.innerHTML = ''
                                 // insert(el,parent)
                                 const vnode = options.render.call(proxy)
                                 // 转化为vnode -> dom
+                                // 首次初始化的时候
                                 if (!this.isMountde){
                                     const el = this.createElm(vnode)
                                     insert(el,parent)
                                     this.isMountde = true
                                 }else {
-
+                                    //update dom
+                                    //patch = diff
+                                    this.patch(this._vnode,vnode)
                                 }
+                                //保存上一次的节点   老节点 来进行比较
+                                this._vnode = vnode
                             })
                         },
-                        createElm({tag,props,children}) {
+                        patch(n1,n2){
+                            const el = n2.el = n1.el
+                            // n1 old   n2 new
+                            // 同层比较  深度优先
+                            // 必须更新相同节点
+                            if (n1.tag === n2.tag && n1.key === n2.key){
+                                //update （props,children）
+                                const n1C = n1.children
+                                const n2N = n2.children
+                                if (typeof n1C === 'string'){
+                                    if (typeof n2N === 'string') {
+                                        el.textContent = n2N
+                                    }else {
+
+                                    }
+                                }else {
+                                    if (typeof n2N === 'string'){
+
+                                    }else {
+
+                                    }
+                                }
+                            }else {
+                                //replace
+                            }
+                        },
+                        createElm(vnode) {
+                            const {tag,props,children} = vnode
                             //遍历vnode 生成整棵树
                             // 设计平台通用的createElement
                             const el = createElement(tag)
@@ -95,6 +128,8 @@
                                 //先把创建的子树加入到父元素   然后  在进行递归构建
                                 children.forEach(child => insert(this.createElm(child),el))
                             }
+                            // vnode要保存真实dom，已备用更新
+                            vnode.el = el
                             return el
                         },
                         compile(template) {
@@ -105,12 +140,12 @@
                                 // const h3 = document.createElement('h3')
                                 // h3.textContent = this.title
                                 // return h3
-                                // return h('h2',null,this.title)
-                                return h('h1',null,[
-                                    h('p',null,'vnode1'),
-                                    h('p',null,'vnode2'),
-                                    h('p',null,'vnode3')
-                                ])
+                                return h('h2',null,this.title)
+                                // return h('h1',null,[
+                                //     h('p',null,'vnode1'),
+                                //     h('p',null,'vnode2'),
+                                //     h('p',null,'vnode3')
+                                // ])
                             }
                         }
                     }
