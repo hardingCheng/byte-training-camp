@@ -17,7 +17,7 @@
     // 1.基本结构
     const Vue = {
         // 扩展性
-        createRenderer({querySelector,insert,createElement}) {
+        createRenderer({querySelector,insert,createElement,remove}) {
             return {
                 createApp(options) {
                     return {
@@ -96,25 +96,46 @@
                             // 必须更新相同节点
                             if (n1.tag === n2.tag && n1.key === n2.key){
                                 //update （props,children）
-                                const n1C = n1.children
-                                const n2N = n2.children
-                                if (typeof n1C === 'string'){
-                                    if (typeof n2N === 'string') {
-                                        el.textContent = n2N
+                                const oldCh = n1.children
+                                const newCh = n2.children
+
+                                if (typeof oldCh === 'string'){
+                                    if (typeof newCh === 'string') {
+                                        el.textContent = newCh
                                     }else {
                                         // 替换文本  为  节点
                                         el.textContent = ""
-                                        n2N.forEach(child => insert(this.createElm(child),el))
+                                        newCh.forEach(child => insert(this.createElm(child),el))
                                     }
                                 }else {
-                                    if (typeof n2N === 'string'){
-                                        el.textContent = n2N
+                                    if (typeof newCh === 'string'){
+                                        el.textContent = newCh
                                     }else {
-
+                                        //update children
+                                        //首位  末尾  比较  往中间走
+                                        this.updateChildren(el,oldCh,newCh)
                                     }
                                 }
                             }else {
                                 //replace
+                            }
+                        },
+                        updateChildren(el,oldCh,newCh){
+                            const len = Math.min(oldCh.length,newCh.length)
+                            for(let i = 0; i < len; i++){
+                                this.patch(oldCh[i],newCh[i])
+                            }
+                            //新的多
+                            if (newCh.length > oldCh.length) {
+                                //批量创建并追加
+                                newCh.slice(len).forEach(child => {
+                                    insert(this.createElm(child), el)
+                                })
+                            }
+                            else if(newCh.length < oldCh.length) {
+                                oldCh.slice(len).forEach(child => {
+                                    remove(child.el, el)
+                                })
                             }
                         },
                         createElm(vnode) {
@@ -130,7 +151,8 @@
                                 //先把创建的子树加入到父元素   然后  在进行递归构建
                                 children.forEach(child => insert(this.createElm(child),el))
                             }
-                            // vnode要保存真实dom，已备用更新
+                            // 好更新更新
+                            // vnode要保存真实dom，已备用更新的时候使用
                             vnode.el = el
                             return el
                         },
@@ -148,9 +170,9 @@
                                     return h('h2',null,this.title)
                                 }
                                 // return h('h1',null,[
-                                //     h('p',null,'vnode1'),
-                                //     h('p',null,'vnode2'),
-                                //     h('p',null,'vnode3')
+                                //     h('p',null,this.title),
+                                //     h('p',null,this.title),
+                                //     h('p',null,this.title),
                                 // ])
                             }
                         }
@@ -170,6 +192,9 @@
                 },
                 createElement(tag){
                     return document.createElement(tag)
+                },
+                remove(el, parent){
+                    parent.removeChild(el)
                 }
             })
             return renderer.createApp(options)
@@ -259,11 +284,11 @@
        // },
         setup() {
             const state = reactive({
-                title:'hello,vue3! Proxy + 我来扩展了！createRenderer'.split(''),
+                title:'hello,vue3!'.split(','),
             })
             // 组件更新  变为副作用函数
             setTimeout(() => {
-                state.title = '我来扩展了！createRenderer + hello,vue3! Proxy + 我是2秒之后相应更新的'
+                state.title = 'vue3!'.split(',')
             },5000)
             return state
         }
