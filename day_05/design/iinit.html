@@ -7,87 +7,191 @@
 </head>
 <body>
 <div id="app">
-    {{title}}
+<!--    {{title}}-->
 </div>
 <script>
     // 1.基本结构
     const Vue = {
-        createApp(options) {
+        // 扩展性
+        createRenderer({querySelector,insert}) {
             return {
-                mount(selector){
-                    console.log('mounts')
-                    /*
-                    1. 找到宿主元素
-                    2. 渲染页面
-                        2.1 吃力template编译
-                        2.2 用户直接编写render
-                    3.追加到宿主
-                     */
-                    const parent = document.querySelector(selector)
-                    // 2. 渲染页面
-                    if (!options.render){
-                        //  2.1 吃力template编译
-                        options.render = this.compile(parent.innerHTML)
-                    }
-
-                    // setup和其他选项兼容性问题
-
-                    if(options.setup){
-                        this.setupState = options.setup()
-                    }
-                    if(options.data){
-                        this.data = options.data()
-                    }
-                    // 对某个对象封装加盒
-                    const proxy = new Proxy(this,{
-                        get(target,key){
-                            if (target.setupState && key in target.setupState){
-                                return target.setupState[key]
-                            }else {
-                                return target.data[key]
+                createApp(options) {
+                    return {
+                        mount(selector){
+                            console.log('mounts')
+                            /*
+                            1. 找到宿主元素
+                            2. 渲染页面
+                                2.1 吃力template编译
+                                2.2 用户直接编写render
+                            3.追加到宿主
+                             */
+                            const parent = querySelector(selector)
+                            // 2. 渲染页面
+                            if (!options.render){
+                                //  2.1 吃力template编译
+                                options.render = this.compile(parent.innerHTML)
                             }
+
+                            // setup和其他选项兼容性问题
+
+                            if(options.setup){
+                                this.setupState = options.setup()
+                            }
+                            if(options.data){
+                                this.data = options.data()
+                            }
+                            // 对某个对象封装加盒
+                            const proxy = new Proxy(this,{
+                                get(target,key){
+                                    if (target.setupState && key in target.setupState){
+                                        return Reflect.get(target.setupState,key)
+                                    }else {
+                                        return Reflect.get(target.data,key)
+                                    }
+                                },
+                                set(target,key,val){
+                                    if (target.setupState && key in target.setupState){
+                                        Reflect.set(target.setupState,key,val)
+                                    }else {
+                                        Reflect.set(target.data,key,val)
+                                    }
+                                }
+                            })
+
+                            //2.2 用户直接编写render
+                            this.update = function(){
+                                // 把data的返回值作为上下文
+                                const el = options.render.call(proxy)
+                                //  3.追加到宿主
+                                insert(el,parent)
+                            }
+                            this.update()
                         },
-                        set(target,key,val){
-                            if (target.setupState && key in target.setupState){
-                                target.setupState[key] =val
-                            }else {
-                                target.data[key] = val
+                        compile(template) {
+                            // 返回一个render函数
+                            // parse -> ast
+                            // generate -> ast -> render
+                            return function render() {
+                                const h3 = document.createElement('h3')
+                                h3.textContent = this.title
+                                return h3
                             }
                         }
-                    })
-
-                    //2.2 用户直接编写render
-                    // 把data的返回值作为上下文
-                    const el = options.render.call(proxy)
-                    //  3.追加到宿主
+                    }
+                },
+            }
+        },
+        // 返回app实例
+        createApp(options) {
+            // 创建一个web平台特有的渲染器
+            const renderer = Vue.createRenderer({
+                querySelector(sel){
+                    return node = document.querySelector(sel)
+                },
+                insert(el,parent){
                     parent.innerHTML = ''
                     parent.appendChild(el)
-                },
-                compile(template) {
-                    // 返回一个render函数
-                    // parse -> ast
-                    // generate -> ast -> render
-                    return function render() {
-                        const h3 = document.createElement('h3')
-                        h3.textContent = this.title
-                        return h3
-                    }
                 }
-            }
+            })
+            return renderer.createApp(options)
         },
     }
 </script>
 <script>
-    const app = Vue.createApp({
-       data() {
-           return {
-               title:'hello,vue3。字节实训营'
-           }
-       },
-        setup() {
-            return {
-                title:'hello,vue3! Proxy!'
+    //够拦截用户对代理对象的访问
+    //从而在值发生化的时候做出购应式
+    function reactive(obj) {
+        // Object.defineProperty(obj,)
+        return new Proxy(obj,{
+            get(target,key){
+                // 建立依赖关系   target,key,update
+                console.log('get',key)
+                track(target,key)  //订阅
+                return target[key]
+
+            },
+            set(target,key,val){
+                console.log('set',key)
+                Reflect.set(target,key,val)
+                // 获取依赖关系
+                // 通知更新  发布
+                trigger(target,key)
+                // app.update()
             }
+        })
+    }
+    // 建立映射关系：依赖dep 组件更新函数     观察者模式 （Vue2）
+    // Vue3 创建map结构
+    // {
+    //     target:{
+    //         key:[update1,update2]
+    //     }
+    // }
+    // 临时存放  要执行的函数fn
+    const effectStack = []
+    function effect(fn){
+        const eff = function (){
+            try {
+                effectStack.push(eff)
+                fn()
+            }finally {
+                effectStack.pop()
+            }
+        }
+        // 立即调用一次
+        eff()
+        return eff
+    }
+    // 首先执行fn,建立依赖关系数据结构  保存映射关系
+    const targetMap = {}
+    // target key 和effectStack存储的副作用函数
+    function track(target,key){
+        const effect = effectStack[effectStack.length - 1]
+        let map = targetMap[target]
+        if (!map){
+            // 首次拿到target
+            map = targetMap[target] = {}
+        }
+        let deps = map[key]
+        if (!deps){
+            // 应该是new Set 不能重复
+            deps = map[key] = []
+        }
+        if (deps.indexOf(effect) === -1){
+            deps.push(effect)
+        }
+    }
+    function trigger(target,key){
+        const map = targetMap[target]
+        if (map){
+            const deps = map[key]
+            if (deps) {
+                deps.forEach( dep => dep())
+            }
+        }
+    }
+    const obj = reactive({foo:'foo'})
+    effect(() => {
+        console.log(obj.foo)
+    })
+    obj.foo = 'foooooooooooooooooooooooooooooooooo'
+    const app = Vue.createApp({
+        //  需要处理data的数据的响应式
+       // data() {
+       //     return {
+       //         title:'hello,vue3。字节实训营'
+       //     }
+       // },
+        setup() {
+            const state = reactive({
+                title:'hello,vue3! Proxy + 我来扩展了！createRenderer'
+            })
+            // setTimeout(() => {
+            //     state.title = '我来扩展了！createRenderer + hello,vue3! Proxy + 我是2秒之后相应更新的'
+            // },2000)
+
+            return state
         }
     })
     // 变为实例创建
