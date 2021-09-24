@@ -102,11 +102,13 @@
                                     if (typeof n2N === 'string') {
                                         el.textContent = n2N
                                     }else {
-
+                                        // 替换文本  为  节点
+                                        el.textContent = ""
+                                        n2N.forEach(child => insert(this.createElm(child),el))
                                     }
                                 }else {
                                     if (typeof n2N === 'string'){
-
+                                        el.textContent = n2N
                                     }else {
 
                                     }
@@ -140,7 +142,11 @@
                                 // const h3 = document.createElement('h3')
                                 // h3.textContent = this.title
                                 // return h3
-                                return h('h2',null,this.title)
+                                if (Array.isArray(this.title)) {
+                                    return h('h2',null,this.title.map((s => h('p',null,s))))
+                                }else {
+                                    return h('h2',null,this.title)
+                                }
                                 // return h('h1',null,[
                                 //     h('p',null,'vnode1'),
                                 //     h('p',null,'vnode2'),
@@ -253,12 +259,12 @@
        // },
         setup() {
             const state = reactive({
-                title:'hello,vue3! Proxy + 我来扩展了！createRenderer'
+                title:'hello,vue3! Proxy + 我来扩展了！createRenderer'.split(''),
             })
             // 组件更新  变为副作用函数
             setTimeout(() => {
                 state.title = '我来扩展了！createRenderer + hello,vue3! Proxy + 我是2秒之后相应更新的'
-            },2000)
+            },5000)
             return state
         }
     })
