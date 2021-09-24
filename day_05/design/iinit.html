@@ -24,13 +24,41 @@
                     3.追加到宿主
                      */
                     const parent = document.querySelector(selector)
+                    // 2. 渲染页面
                     if (!options.render){
                         //  2.1 吃力template编译
                         options.render = this.compile(parent.innerHTML)
                     }
+
+                    // setup和其他选项兼容性问题
+
+                    if(options.setup){
+                        this.setupState = options.setup()
+                    }
+                    if(options.data){
+                        this.data = options.data()
+                    }
+                    // 对某个对象封装加盒
+                    const proxy = new Proxy(this,{
+                        get(target,key){
+                            if (target.setupState && key in target.setupState){
+                                return target.setupState[key]
+                            }else {
+                                return target.data[key]
+                            }
+                        },
+                        set(target,key,val){
+                            if (target.setupState && key in target.setupState){
+                                target.setupState[key] =val
+                            }else {
+                                target.data[key] = val
+                            }
+                        }
+                    })
+
                     //2.2 用户直接编写render
                     // 把data的返回值作为上下文
-                    const el = options.render.call(options.data())
+                    const el = options.render.call(proxy)
                     //  3.追加到宿主
                     parent.innerHTML = ''
                     parent.appendChild(el)
@@ -55,7 +83,12 @@
            return {
                title:'hello,vue3。字节实训营'
            }
-       }
+       },
+        setup() {
+            return {
+                title:'hello,vue3! Proxy!'
+            }
+        }
     })
     // 变为实例创建
     app.mount('#app')
