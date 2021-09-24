@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<!--    <script src="https://unpkg.com/vue@next"></script>-->
+</head>
+<body>
+<div id="app">
+    {{title}}
+</div>
+<script>
+    // 1.基本结构
+    const Vue = {
+        createApp(options) {
+            return {
+                mount(selector){
+                    console.log('mounts')
+                    /*
+                    1. 找到宿主元素
+                    2. 渲染页面
+                        2.1 吃力template编译
+                        2.2 用户直接编写render
+                    3.追加到宿主
+                     */
+                    const parent = document.querySelector(selector)
+                    if (!options.render){
+                        //  2.1 吃力template编译
+                        options.render = this.compile(parent.innerHTML)
+                    }
+                    //2.2 用户直接编写render
+                    // 把data的返回值作为上下文
+                    const el = options.render.call(options.data())
+                    //  3.追加到宿主
+                    parent.innerHTML = ''
+                    parent.appendChild(el)
+                },
+                compile(template) {
+                    // 返回一个render函数
+                    // parse -> ast
+                    // generate -> ast -> render
+                    return function render() {
+                        const h3 = document.createElement('h3')
+                        h3.textContent = this.title
+                        return h3
+                    }
+                }
+            }
+        },
+    }
+</script>
+<script>
+    const app = Vue.createApp({
+       data() {
+           return {
+               title:'hello,vue3。字节实训营'
+           }
+       }
+    })
+    // 变为实例创建
+    app.mount('#app')
+</script>
+</body>
+</html>

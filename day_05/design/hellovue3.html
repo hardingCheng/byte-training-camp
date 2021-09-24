@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/vue@next"></script>
+</head>
+<body>
+<div id="app">
+    {{title}}
+    <my-component-name/>
+</div>
+<script>
+  // app实例的创建   可以很好的找到依赖
+  // 复用性更好
+  // 可读性
+  // 可维护性
+  // 可以写hook
+  // 为什么用工厂函数的方式？函数式的类型确定
+
+  // 扩展：自定义渲染器
+  const renderer = Vue.createRenderer({
+
+  })
+  function useTitle() {
+      const state = Vue.reactive({
+          title:'vue3，hellodas'
+      })
+      setTimeout(() => {
+          state.title = 'new title'
+      },1000)
+      return {
+          state
+      }
+  }
+  const app = Vue.createApp({
+      // 消灭this
+      // setup优先级更高  优先选择
+      setup(){
+          //声明响应式数据
+          const {state} = useTitle()
+
+          return state
+      },
+      // render() {
+      //     return Vue.h('div',{
+      //         title:this.title,
+      //         foo:this.title,
+      //         onMyClick() {
+      //
+      //         }
+      //     },'xxx')
+      // }
+  })
+  // 变为实例创建
+  app.component('my-component-name', {
+     template:'<div>jajajj</div>'
+  })
+  app.mount('#app')
+</script>
+</body>
+</html>
